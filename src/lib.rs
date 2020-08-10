@@ -77,17 +77,31 @@ use std::collections::btree_map::Range;
 /// A float type with precision
 ///
 ///
-#[derive(Debug, PartialOrd, Eq, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 pub struct Float {
-   number: u64,
-//    precision: usize
+   number: f64,
 }
+
+impl PartialOrd for Float {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        self.number.partial_cmp(&other.number)
+    }
+}
+
+impl PartialEq for Float {
+    fn eq(&self, other: &Self) -> bool {
+        let round_number = (self.number * 100.0).round() / 100.0;
+        let round_other = (other.number * 100.0).round() / 100.0;
+        round_number == round_other
+    }
+}
+
+impl Eq for Float {}
 
 impl Ord for Float {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
-        self.number.cmp(&other.number)
+        self.partial_cmp(other).unwrap()
     }
-
 }
 
 /// A histogram is a collection of samples, sorted into buckets.
@@ -98,6 +112,7 @@ pub struct Histogram {
     num_buckets: u64,
     samples: BTreeMap<u64, u64>,
     float_samples: BTreeMap<Float, u64>,
+    fminmax: stats::MinMax<f64>,
     stats: stats::OnlineStats,
     minmax: stats::MinMax<u64>,
 }
@@ -118,6 +133,7 @@ impl Histogram {
             float_samples: Default::default(),  // BTreeMap::new(),
             stats: Default::default(),
             minmax: Default::default(),
+            fminmax: Default::default()
         }
     }
 
@@ -128,11 +144,13 @@ impl Histogram {
         self.stats.add(sample);
     }
 
+    /// Add a new float sample to this histogram
     pub fn add_float(&mut self, sample: Float) {
-        *self.float_samples.entry(sample).or_insert(0) += 1;
-
+        *self.float_samples.entry(sample.clone()).or_insert(0) += 1;
+        self.fminmax.add(sample.number.clone());
+        self.stats.add(sample.number);
     }
-    
+
     /// Get an iterator over this histogram's buckets.
     pub fn buckets(&self) -> Buckets {
         Buckets {
@@ -141,9 +159,6 @@ impl Histogram {
         }
     }
 
-    // fn cmp(&self, other: &Histogram) -> Option<cmp::Ordering> {
-    //     self.float_samples.cmp(&other.float_samples)
-    // }
 }
 
 impl fmt::Display for Histogram {
@@ -339,6 +354,19 @@ mod tests {
         let mut histo = Histogram::with_buckets(1);
         histo.add(99);
         histo.to_string();
+    }
+
+    #[test]
+    fn add_float() {
+        let mut histo = Histogram::with_buckets(1);
+        let fnum = Float {number: 2.3};
+
+        for _ in 0..10 {
+            histo.add_float(fnum.clone());
+        }
+
+        println!("{:?}", histo);
+
     }
 }
 
