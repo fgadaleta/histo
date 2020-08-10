@@ -361,9 +361,14 @@ mod tests {
         let mut histo = Histogram::with_buckets(1);
         let fnum = Float {number: 2.3};
 
-        for _ in 0..10 {
+        let numsamples = 10;
+
+        for _ in 0..numsamples {
             histo.add_float(fnum.clone());
         }
+
+        assert_eq!(numsamples, histo.stats.len(), "stats.len() should be correct");
+        assert_eq!(numsamples, histo.fminmax.len(), "minmax.len() should be correct");
 
         println!("{:?}", histo);
 
