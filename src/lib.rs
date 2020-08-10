@@ -74,6 +74,19 @@ use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 
+#[derive(Debug, PartialOrd, Eq, PartialEq, Clone)]
+struct Float {
+   number: u64,
+//    precision: usize
+}
+
+impl Ord for Float {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        self.number.cmp(&other.number)
+    }
+
+}
+
 /// A histogram is a collection of samples, sorted into buckets.
 ///
 /// See the crate level documentation for more details.
@@ -81,9 +94,11 @@ use std::collections::btree_map::Range;
 pub struct Histogram {
     num_buckets: u64,
     samples: BTreeMap<u64, u64>,
+    float_samples: BTreeMap<Float, u64>,
     stats: stats::OnlineStats,
     minmax: stats::MinMax<u64>,
 }
+
 
 impl Histogram {
     /// Construct a new histogram with the given number of buckets.
@@ -93,9 +108,11 @@ impl Histogram {
     /// Panics if the number of buckets is zero.
     pub fn with_buckets(num_buckets: u64) -> Histogram {
         assert!(num_buckets > 0);
+
         Histogram {
             num_buckets,
             samples: Default::default(),
+            float_samples: Default::default(),  // BTreeMap::new(),
             stats: Default::default(),
             minmax: Default::default(),
         }
@@ -115,6 +132,10 @@ impl Histogram {
             index: 0,
         }
     }
+
+    // fn cmp(&self, other: &Histogram) -> Option<cmp::Ordering> {
+    //     self.float_samples.cmp(&other.float_samples)
+    // }
 }
 
 impl fmt::Display for Histogram {
