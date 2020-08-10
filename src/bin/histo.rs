@@ -15,7 +15,7 @@ fn main() {
 }
 
 fn try_main() -> io::Result<()> {
-    let mut hist = histo::Histogram::with_buckets(10);
+    let mut hist = histo::Histogram::with_buckets(10, 2);
 
     let stdin = io::stdin();
     let mut stdin = stdin.lock();

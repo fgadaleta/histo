@@ -22,4 +22,3 @@ rand = "0.7"
 [dependencies.quickcheck]
 optional = true
 version = "0.4.1"
-rand = "0.7.3"
