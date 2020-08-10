@@ -74,8 +74,11 @@ use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 
+/// A float type with precision
+///
+///
 #[derive(Debug, PartialOrd, Eq, PartialEq, Clone)]
-struct Float {
+pub struct Float {
    number: u64,
 //    precision: usize
 }
@@ -125,6 +128,11 @@ impl Histogram {
         self.stats.add(sample);
     }
 
+    pub fn add_float(&mut self, sample: Float) {
+        *self.float_samples.entry(sample).or_insert(0) += 1;
+
+    }
+    
     /// Get an iterator over this histogram's buckets.
     pub fn buckets(&self) -> Buckets {
         Buckets {
