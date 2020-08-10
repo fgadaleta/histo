@@ -66,8 +66,8 @@
 #[cfg(all(test, feature = "quickcheck"))]
 #[macro_use]
 extern crate quickcheck;
-
 extern crate stats;
+extern crate rand;
 
 use std::cmp;
 use std::fmt;
@@ -319,6 +319,7 @@ impl<'a> fmt::Debug for Bucket<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::prelude::*;
 
     #[test]
     fn num_buckets() {
@@ -359,18 +360,21 @@ mod tests {
     #[test]
     fn add_float() {
         let mut histo = Histogram::with_buckets(1);
-        let fnum = Float {number: 2.3};
+        let mut fnum = Float {number: 2.3};
 
-        let numsamples = 10;
+        let numsamples = 1000;
+        let mut rng = rand::thread_rng();
 
         for _ in 0..numsamples {
+            let random_num: f64 = rng.gen();
+            fnum.number += random_num;
             histo.add_float(fnum.clone());
         }
 
         assert_eq!(numsamples, histo.stats.len(), "stats.len() should be correct");
         assert_eq!(numsamples, histo.fminmax.len(), "minmax.len() should be correct");
 
-        println!("{:?}", histo);
+        // println!("{:?}", histo);
 
     }
 }
