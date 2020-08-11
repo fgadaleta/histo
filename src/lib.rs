@@ -15,7 +15,7 @@
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
-//! let mut histogram = Histogram::with_buckets(10, 2);
+//! let mut histogram = Histogram::with_buckets(10, Some(2));
 //!
 //! // Adds some samples to the histogram.
 //! for sample in 0..100 {
@@ -319,8 +319,8 @@ impl<'a> Iterator for Buckets<'a> {
 pub struct Bucket<'a> {
     start: u64,
     end: u64,
-    range: Range<'a, u64, u64>,
-    // float_range: Range<'a, f64, f64>
+    // range: Range<'a, u64, u64>,
+    range: Range<'a, Float, u64>
 }
 
 impl<'a> Bucket<'a> {
@@ -355,7 +355,7 @@ mod tests {
     fn num_buckets() {
         let mut histo = Histogram::with_buckets(10, None);
         for i in 0..100 {
-            histo.add(i);
+            histo.add_float(Float{number: i as f64});
         }
         assert_eq!(histo.buckets().count(), 10);
     }
@@ -364,7 +364,7 @@ mod tests {
     fn bucket_count() {
         let mut histo = Histogram::with_buckets(1, None);
         for i in 0..10 {
-            histo.add(i);
+            histo.add_float(Float{number: i as f64});
         }
         assert_eq!(histo.buckets().count(), 1);
         assert_eq!(histo.buckets().next().unwrap().count(), 10);
@@ -389,7 +389,7 @@ mod tests {
 
     #[test]
     fn add_float() {
-        let mut histo = Histogram::with_buckets(10, None);
+        let mut histo = Histogram::with_buckets(5, Some(2));
         let numsamples = 100;
         let mut rng = rand::thread_rng();
 
