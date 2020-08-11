@@ -289,14 +289,15 @@ impl<'a> Iterator for Buckets<'a> {
             _ => return None,
         };
 
-        let range = (max - min) as u64;
-        let range = range + (range % self.histogram.num_buckets);
+        let range = (max - min) as f64;
+        let range = range + (range as u64 % self.histogram.num_buckets) as f64;
 
-        let bucket_size = range / self.histogram.num_buckets;
-        let bucket_size = cmp::max(1, bucket_size);
+        // TODO this has to be f64
+        let bucket_size = range / self.histogram.num_buckets as f64;
+        // let bucket_size = cmp::max(1, bucket_size);
 
-        let start = min as u64 + self.index * bucket_size;
-        let end = min as u64 + (self.index + 1) * bucket_size;
+        let start = min + (self.index as f64 * bucket_size) as f64;
+        let end = min + ((self.index + 1) as f64 * bucket_size) as f64;
 
         self.index += 1;
 
@@ -317,8 +318,8 @@ impl<'a> Iterator for Buckets<'a> {
 /// A bucket is a range of samples and their count.
 #[derive(Clone)]
 pub struct Bucket<'a> {
-    start: u64,
-    end: u64,
+    start: f64,
+    end: f64,
     // range: Range<'a, u64, u64>,
     range: Range<'a, Float, u64>
 }
@@ -330,12 +331,12 @@ impl<'a> Bucket<'a> {
     }
 
     /// The start of this bucket's range.
-    pub fn start(&self) -> u64 {
+    pub fn start(&self) -> f64 {
         self.start
     }
 
     /// The end of this bucket's range.
-    pub fn end(&self) -> u64 {
+    pub fn end(&self) -> f64 {
         self.end
     }
 }
@@ -383,7 +384,7 @@ mod tests {
         use std::string::ToString;
 
         let mut histo = Histogram::with_buckets(1, None);
-        histo.add(99);
+        histo.add_float(Float{number: 99f64});
         histo.to_string();
     }
 
@@ -399,8 +400,8 @@ mod tests {
             histo.add_float(sample);
         }
 
-        for bucket in histo.buckets() {
-            println!("{} {} {}", bucket.start(), bucket.end(), bucket.count());
+        for (i, bucket) in histo.buckets().enumerate() {
+            println!("bucket {} from:{} to:{} count:{}", i, bucket.start(), bucket.end(), bucket.count());
         }
         println!("stats: {:?}", histo.stats);
         println!("min,max: {:?}", histo.fminmax);
