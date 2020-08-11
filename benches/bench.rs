@@ -6,7 +6,7 @@ extern crate test;
 #[bench]
 fn bench_adding_samples(b: &mut test::Bencher) {
     b.iter(|| {
-        let mut h = histo::Histogram::with_buckets(10);
+        let mut h = histo::Histogram::with_buckets(10, None);
         for i in 0..100 {
             h.add(i);
             h.add(i * i);
@@ -20,7 +20,7 @@ fn bench_adding_samples(b: &mut test::Bencher) {
 fn bench_formatting(b: &mut test::Bencher) {
     use std::string::ToString;
 
-    let mut h = histo::Histogram::with_buckets(10);
+    let mut h = histo::Histogram::with_buckets(10, None);
 
     for i in 0..100 {
         h.add(i);
