@@ -60,7 +60,7 @@
 //! # }
 //! ```
 //!
-// #![deny(missing_docs)]
+#![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![deny(unsafe_code)]
 
@@ -75,6 +75,8 @@ use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 
+/// A custom float type for samples
+/// 
 pub mod float;
 use float::float_type::Float;
 

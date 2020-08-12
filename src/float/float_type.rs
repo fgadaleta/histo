@@ -6,9 +6,13 @@ use std::cmp;
 ///
 #[derive(Debug, Clone)]
 pub struct Float {
-   pub number: f64,
+    /// floating point number
+    ///
+    pub number: f64,
 }
 
+/// Trait to add two Float variables
+///
 impl Add<Float> for Float {
     type Output = Self;
 
@@ -19,6 +23,8 @@ impl Add<Float> for Float {
     }
 }
 
+/// Trait to add an f64 to a Float variable
+///
 impl Add<f64> for Float {
     type Output = Self;
 
