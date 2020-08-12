@@ -12,6 +12,7 @@
 //! ```
 //! extern crate histo;
 //! use histo::Histogram;
+//! use histo::float::float_type::Float;
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
@@ -19,8 +20,8 @@
 //!
 //! // Adds some samples to the histogram.
 //! for sample in 0..100 {
-//!     histogram.add(sample);
-//!     histogram.add(sample * sample);
+//!     histogram.add_float(Float{number: sample as f64});
+//!     histogram.add_float(Float{number: (sample * sample) as f64});
 //! }
 //!
 //! // Iterate over buckets and do stuff with their range and count.
@@ -73,57 +74,11 @@ use std::cmp;
 use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
-use std::ops::Add;
 
-/// A float type with precision
-///
-///
-#[derive(Debug, Clone)]
-pub struct Float {
-   number: f64,
-}
-
-impl Add<Float> for Float {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            number: self.number + other.number,
-        }
-    }
-}
-
-impl Add<f64> for Float {
-    type Output = Self;
-
-    fn add(self, other: f64) -> Self {
-        Self {
-            number: self.number + other,
-        }
-    }
-}
-
-impl PartialOrd for Float {
-    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        self.number.partial_cmp(&other.number)
-    }
-}
-
-impl PartialEq for Float {
-    fn eq(&self, other: &Self) -> bool {
-        let round_number = (self.number * 100.0).round() / 100.0;
-        let round_other = (other.number * 100.0).round() / 100.0;
-        round_number == round_other
-    }
-}
-
-impl Eq for Float {}
-
-impl Ord for Float {
-    fn cmp(&self, other: &Self) -> cmp::Ordering {
-        self.partial_cmp(other).unwrap()
-    }
-}
+/// A custom float type for samples
+/// 
+pub mod float;
+use float::float_type::Float;
 
 /// A histogram is a collection of samples, sorted into buckets.
 ///
@@ -132,13 +87,10 @@ impl Ord for Float {
 pub struct Histogram {
     num_buckets: u64,
     precision: u32,
-    samples: BTreeMap<u64, u64>,
     float_samples: BTreeMap<Float, u64>,
-    fminmax: stats::MinMax<f64>,
+    minmax: stats::MinMax<f64>,
     stats: stats::OnlineStats,
-    minmax: stats::MinMax<u64>,
 }
-
 
 impl Histogram {
     /// Construct a new histogram with the given number of buckets.
@@ -152,19 +104,10 @@ impl Histogram {
         Histogram {
             num_buckets,
             precision: precision.unwrap_or(2),
-            samples: Default::default(),
             float_samples: Default::default(),
             stats: Default::default(),
-            minmax: Default::default(),
-            fminmax: Default::default()
+            minmax: Default::default()
         }
-    }
-
-    /// Add a new sample to this histogram.
-    pub fn add(&mut self, sample: u64) {
-        *self.samples.entry(sample).or_insert(0) += 1;
-        self.minmax.add(sample);
-        self.stats.add(sample);
     }
 
     /// Add a new float sample to this histogram
@@ -174,7 +117,7 @@ impl Histogram {
         // prepare float sample and add to histogram
         let sample = Float {number: rounded_sample};
         *self.float_samples.entry(sample.clone()).or_insert(0) += 1;
-        self.fminmax.add(sample.number.clone());
+        self.minmax.add(sample.number.clone());
         self.stats.add(sample.number);
     }
 
@@ -198,8 +141,8 @@ impl fmt::Display for Histogram {
             return Ok(());
         }
 
-        let min = self.fminmax.min().unwrap();
-        let max = self.fminmax.max().unwrap();
+        let min = self.minmax.min().unwrap();
+        let max = self.minmax.max().unwrap();
 
         writeln!(f, "# Min = {}", min)?;
         writeln!(f, "# Max = {}", max)?;
@@ -284,7 +227,7 @@ impl<'a> Iterator for Buckets<'a> {
             return None;
         }
 
-        let (min, max) = match (self.histogram.fminmax.min(), self.histogram.fminmax.max()) {
+        let (min, max) = match (self.histogram.minmax.min(), self.histogram.minmax.max()) {
             (Some(&min), Some(&max)) => (min, max),
             _ => return None,
         };
@@ -404,12 +347,12 @@ mod tests {
             println!("bucket {} from:{} to:{} count:{}", i, bucket.start(), bucket.end(), bucket.count());
         }
         println!("stats: {:?}", histo.stats);
-        println!("min,max: {:?}", histo.fminmax);
+        println!("min,max: {:?}", histo.minmax);
         println!("samples: {:?}", histo.float_samples);
         println!("histo: {}", histo);
 
         assert_eq!(numsamples, histo.stats.len(), "stats.len() should be correct");
-        assert_eq!(numsamples, histo.fminmax.len(), "minmax.len() should be correct");
+        assert_eq!(numsamples, histo.minmax.len(), "minmax.len() should be correct");
 
     }
 }
