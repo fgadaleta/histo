@@ -12,6 +12,7 @@
 //! ```
 //! extern crate histo;
 //! use histo::Histogram;
+//! use histo::float::float_type::Float;
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
@@ -19,8 +20,8 @@
 //!
 //! // Adds some samples to the histogram.
 //! for sample in 0..100 {
-//!     histogram.add(sample);
-//!     histogram.add(sample * sample);
+//!     histogram.add_float(Float{number: sample as f64});
+//!     histogram.add_float(Float{number: (sample * sample) as f64});
 //! }
 //!
 //! // Iterate over buckets and do stuff with their range and count.
@@ -59,7 +60,7 @@
 //! # }
 //! ```
 //!
-#![deny(missing_docs)]
+// #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![deny(unsafe_code)]
 
@@ -74,7 +75,7 @@ use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 
-mod float;
+pub mod float;
 use float::float_type::Float;
 
 /// A histogram is a collection of samples, sorted into buckets.
