@@ -10,9 +10,9 @@
 //! It uses O(n) memory.
 //!
 //! ```
-//! extern crate histo;
-//! use histo::Histogram;
-//! use histo::float::float_type::Float;
+//! extern crate histo_fp;
+//! use histo_fp::Histogram;
+//! use histo_fp::float::float_type::Float;
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
@@ -76,7 +76,7 @@ use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 
 /// A custom float type for samples
-/// 
+///
 pub mod float;
 use float::float_type::Float;
 

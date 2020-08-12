@@ -1,6 +1,6 @@
 # `histo`
 
-[![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fitzgen/histo) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
+[![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fgadaleta/histo_fp) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo_fp) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
 
 Histograms with a configurable number of buckets, and a terminal-friendly
 `Display`.
@@ -15,14 +15,15 @@ It uses O(n) memory.
 ```rust
 extern crate histo;
 use histo::Histogram;
+use histo::float::float_type::Float;
 
 // Create a histogram that will have 10 buckets.
-let mut histogram = Histogram::with_buckets(10);
+let mut histogram = Histogram::with_buckets(10, None);
 
 // Adds some samples to the histogram.
 for sample in 0..100 {
-    histogram.add(sample);
-    histogram.add(sample * sample);
+    histogram.add_float(Float{number: sample as f64);
+    histogram.add_float(Float{number: (sample * sample) as f64);
 }
 
 // Iterate over buckets and do stuff with their range and count.
@@ -61,17 +62,17 @@ println!("{}", histogram);
 
 ## Install and Usage
 
-To use the `histo` crate in your Rust project, add it to your `Cargo.toml` file:
+To use the `histo_fp` crate in your Rust project, add it to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-histo = "0.1.0"
+histo_fp = "0.2.0"
 ```
 
-The `histo` crate also comes with the command line `histo` tool:
+The `histo_fp` crate also comes with the command line `histo_fp` tool:
 
 ```commands
-$ cargo install histo
+$ cargo install histo_fp
 $ tail samples.txt
 1
 2

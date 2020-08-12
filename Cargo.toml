@@ -4,15 +4,15 @@ description = "Simple histograms with configurable floating point buckets and fl
 documentation = "https://docs.rs/histo"
 keywords = ["histogram", "stddev", "mean"]
 license = "Apache-2.0/MIT"
-name = "histo"
-repository = "https://github.com/fgadaleta/histo"
+name = "histo_fp"
+repository = "https://github.com/fgadaleta/histo_fp"
 version = "0.2.0"
 
 [badges]
-travis-ci = { repository = "fgadaleta/histo" }
+travis-ci = { repository = "fgadaleta/histo_fp" }
 
 [[bin]]
-name = "histo"
+name = "histo_fp"
 doc = false
 
 [dependencies]
