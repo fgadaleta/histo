@@ -6,6 +6,12 @@ extern crate histo;
 use std::io::{self, BufRead, Write};
 use std::process;
 
+use histo::*;
+
+// mod float;
+// use float::float_type::Float;
+
+
 fn main() {
     if let Err(e) = try_main() {
         let mut stderr = io::stderr();
@@ -31,7 +37,7 @@ fn try_main() -> io::Result<()> {
                 .parse()
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
-            hist.add(sample);
+            hist.add_float(Float{number: sample as f64});
         }
 
         line.clear();
