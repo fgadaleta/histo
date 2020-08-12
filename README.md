@@ -1,21 +1,20 @@
-# `histo`
+# `histo_fp`
 
 [![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fgadaleta/histo_fp) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo_fp) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
 
-Histograms with a configurable number of buckets, and a terminal-friendly
+Histograms with a configurable number of floating point buckets, and a terminal-friendly
 `Display`.
 
 This crate provides a `Histogram` type that allows configuration of the number
-of buckets that will be used, regardless of the range of input samples. This is
-useful when displaying a `Histogram` (for example, when printing it to a
+of buckets with size in floating point that will be used, regardless of the range of input samples. This is useful when displaying a `Histogram` (for example, when printing it to a
 terminal) but it sacrifices fancy tracking of precision and significant figures.
 
 It uses O(n) memory.
 
 ```rust
-extern crate histo;
-use histo::Histogram;
-use histo::float::float_type::Float;
+extern crate histo_fp;
+use histo_fp::Histogram;
+use histo_fp::float::float_type::Float;
 
 // Create a histogram that will have 10 buckets.
 let mut histogram = Histogram::with_buckets(10, None);
