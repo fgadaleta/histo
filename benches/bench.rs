@@ -3,8 +3,8 @@
 extern crate histo;
 extern crate test;
 
-pub mod src;
-use src::super::*;
+// mod Float;
+pub mod float_type;
 
 #[bench]
 fn bench_adding_samples(b: &mut test::Bencher) {
