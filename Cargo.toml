@@ -7,6 +7,7 @@ license = "Apache-2.0/MIT"
 name = "histo"
 repository = "https://github.com/fgadaleta/histo"
 version = "0.2.0"
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "fgadaleta/histo" }
@@ -18,6 +19,7 @@ doc = false
 [dependencies]
 streaming-stats = "0.1.28"
 rand = "0.7"
+noisy_float = "0.1.12"
 
 [dependencies.quickcheck]
 optional = true
