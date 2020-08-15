@@ -364,13 +364,13 @@ mod quickchecks {
             let len = samples.len();
             let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             assert_eq!(len, histo.stats.len(), "stats.len() should be correct");
             assert_eq!(len, histo.minmax.len(), "minmax.len() should be correct");
             assert_eq!(len as u64,
-                       histo.samples.values().cloned().sum::<u64>(),
+                       histo.float_samples.values().cloned().sum::<u64>(),
                        "samples.values() count should be correct");
             assert_eq!(len as u64,
                        histo.buckets().map(|b| b.count()).sum::<u64>(),
@@ -387,7 +387,7 @@ mod quickchecks {
 
             let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             assert!(histo.buckets().count() as u64 <= buckets,
@@ -401,7 +401,7 @@ mod quickchecks {
 
             let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             histo.buckets()
@@ -410,7 +410,7 @@ mod quickchecks {
                     let (min, max) = minmax.unwrap_or((bucket_range, bucket_range));
                     let min = cmp::min(min, bucket_range);
                     let max = cmp::max(max, bucket_range);
-                    assert!(max - min <= 1);
+                    assert!(max - min <= 1f64);
                     Some((min, max))
                 });
         }
@@ -424,7 +424,7 @@ mod quickchecks {
 
             let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
             histo.to_string();
         }
