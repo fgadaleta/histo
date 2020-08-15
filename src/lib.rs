@@ -12,7 +12,6 @@
 //! ```
 //! extern crate histo_fp;
 //! use histo_fp::Histogram;
-//! use histo_fp::float::float_type::Float;
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
@@ -20,8 +19,8 @@
 //!
 //! // Adds some samples to the histogram.
 //! for sample in 0..100 {
-//!     histogram.add_float(Float{number: sample as f64});
-//!     histogram.add_float(Float{number: (sample * sample) as f64});
+//!     histogram.add(sample as f64);
+//!     histogram.add((sample * sample) as f64);
 //! }
 //!
 //! // Iterate over buckets and do stuff with their range and count.
@@ -76,20 +75,6 @@ use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 use noisy_float::prelude::*;
 
-/// A custom float type for samples
-///
-pub mod float;
-// use float::float_type::Float;
-
-/// Generic numeric type (integer or float)
-///
-// #[derive(Clone, Debug)]
-// pub enum NumericType {
-//     I(i64),
-//     F(R64)
-// }
-
-
 /// A histogram is a collection of samples, sorted into buckets.
 ///
 /// See the crate level documentation for more details.
@@ -121,16 +106,7 @@ impl Histogram {
     }
 
     /// Add a new float sample to this histogram
-    // pub fn add_float(&mut self, sample: Float) {
-    //     let multiplier: f64 = (10 as i32).pow(self.precision) as f64;
-    //     let rounded_sample = (sample.number * multiplier).round() / multiplier;
-    //     // prepare float sample and add to histogram
-    //     let sample = Float {number: rounded_sample};
-    //     *self.float_samples.entry(sample.clone()).or_insert(0) += 1;
-    //     self.minmax.add(sample.number.clone());
-    //     self.stats.add(sample.number);
-    // }
-
+    ///
     pub fn add (&mut self, sample: f64) {
         let safe_sample = r64(sample);
         *self.float_samples.entry(safe_sample.clone()).or_insert(0) += 1;
@@ -450,7 +426,6 @@ mod quickchecks {
             for s in samples {
                 histo.add(s);
             }
-
             histo.to_string();
         }
     }

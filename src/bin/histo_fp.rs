@@ -1,11 +1,10 @@
 //! Reads samples from stdin, one per line, and then prints the resulting
 //! histogram.
 
-extern crate histo;
+extern crate histo_fp;
 
 use std::io::{self, BufRead, Write};
 use std::process;
-// use histo::float::float_type::Float;
 
 
 fn main() {
@@ -17,7 +16,7 @@ fn main() {
 }
 
 fn try_main() -> io::Result<()> {
-    let mut hist = histo::Histogram::with_buckets(10, None);
+    let mut hist = histo_fp::Histogram::with_buckets(10, None);
 
     let stdin = io::stdin();
     let mut stdin = stdin.lock();

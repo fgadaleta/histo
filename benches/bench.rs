@@ -1,14 +1,12 @@
 #![feature(test)]
 
-extern crate histo;
+extern crate histo_fp;
 extern crate test;
-
-use histo::float::float_type::Float;
 
 #[bench]
 fn bench_adding_samples(b: &mut test::Bencher) {
     b.iter(|| {
-        let mut h = histo::Histogram::with_buckets(10, None);
+        let mut h = histo_fp::Histogram::with_buckets(10, None);
         for i in 0..100 {
             h.add(i as f64);
             h.add((i*i) as f64);
@@ -22,7 +20,7 @@ fn bench_adding_samples(b: &mut test::Bencher) {
 fn bench_formatting(b: &mut test::Bencher) {
     use std::string::ToString;
 
-    let mut h = histo::Histogram::with_buckets(10, None);
+    let mut h = histo_fp::Histogram::with_buckets(10, None);
 
     for i in 0..100 {
         h.add(i as f64);

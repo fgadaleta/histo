@@ -13,16 +13,16 @@ terminal) but it sacrifices fancy tracking of precision and significant figures.
 It uses O(n) memory.
 
 ```rust
-extern crate histo;
-use histo::Histogram;
+extern crate histo_fp;
+use histo_fp::Histogram;
 
 // Create a histogram that will have 10 buckets.
-let mut histogram = Histogram::with_buckets(10);
+let mut histogram = Histogram::with_buckets(10, None);
 
 // Adds some samples to the histogram.
 for sample in 0..100 {
-    histogram.add(sample);
-    histogram.add(sample * sample);
+    histogram.add(sample as f64);
+    histogram.add((sample * sample) as f64);
 }
 
 // Iterate over buckets and do stuff with their range and count.
