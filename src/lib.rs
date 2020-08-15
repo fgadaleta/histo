@@ -362,7 +362,7 @@ mod quickchecks {
             }
 
             let len = samples.len();
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
                 histo.add(s);
             }
@@ -385,7 +385,7 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
                 histo.add(s);
             }
@@ -399,7 +399,7 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
                 histo.add(s);
             }
@@ -422,7 +422,7 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
                 histo.add(s);
             }
