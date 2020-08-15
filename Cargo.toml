@@ -6,7 +6,7 @@ keywords = ["histogram", "stddev", "mean"]
 license = "Apache-2.0/MIT"
 name = "histo_fp"
 repository = "https://github.com/fgadaleta/histo"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2018"
 
 [badges]
