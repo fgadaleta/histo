@@ -12,7 +12,6 @@
 //! ```
 //! extern crate histo_fp;
 //! use histo_fp::Histogram;
-//! use histo_fp::float::float_type::Float;
 //!
 //! # fn main() {
 //! // Create a histogram that will have 10 buckets.
@@ -20,8 +19,8 @@
 //!
 //! // Adds some samples to the histogram.
 //! for sample in 0..100 {
-//!     histogram.add_float(Float{number: sample as f64});
-//!     histogram.add_float(Float{number: (sample * sample) as f64});
+//!     histogram.add(sample as f64);
+//!     histogram.add((sample * sample) as f64);
 //! }
 //!
 //! // Iterate over buckets and do stuff with their range and count.
@@ -74,11 +73,8 @@ use std::cmp;
 use std::fmt;
 use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
+use noisy_float::prelude::*;
 
-/// A custom float type for samples
-///
-pub mod float;
-use float::float_type::Float;
 
 /// A histogram is a collection of samples, sorted into buckets.
 ///
@@ -87,7 +83,7 @@ use float::float_type::Float;
 pub struct Histogram {
     num_buckets: u64,
     precision: u32,
-    float_samples: BTreeMap<Float, u64>,
+    float_samples: BTreeMap<R64, u64>,
     minmax: stats::MinMax<f64>,
     stats: stats::OnlineStats,
 }
@@ -111,14 +107,12 @@ impl Histogram {
     }
 
     /// Add a new float sample to this histogram
-    pub fn add_float(&mut self, sample: Float) {
-        let multiplier: f64 = (10 as i32).pow(self.precision) as f64;
-        let rounded_sample = (sample.number * multiplier).round() / multiplier;
-        // prepare float sample and add to histogram
-        let sample = Float {number: rounded_sample};
-        *self.float_samples.entry(sample.clone()).or_insert(0) += 1;
-        self.minmax.add(sample.number.clone());
-        self.stats.add(sample.number);
+    ///
+    pub fn add (&mut self, sample: f64) {
+        let safe_sample = r64(sample);
+        *self.float_samples.entry(safe_sample.clone()).or_insert(0) += 1;
+        self.minmax.add(sample.clone());
+        self.stats.add(sample);
     }
 
     /// Get an iterator over this histogram's buckets.
@@ -248,10 +242,10 @@ impl<'a> Iterator for Buckets<'a> {
             start,
             end,
             range: if self.index == self.histogram.num_buckets {
-                self.histogram.float_samples.range(Float{number: start as f64} ..)
+                self.histogram.float_samples.range(r64(start) ..)
                 // self.histogram.samples.range(start..)
             } else {
-                self.histogram.float_samples.range(Float{number: start as f64}.. Float{number: end as f64})
+                self.histogram.float_samples.range(r64(start).. r64(end))
                 // self.histogram.samples.range(start..end)
             },
         })
@@ -264,7 +258,7 @@ pub struct Bucket<'a> {
     start: f64,
     end: f64,
     // range: Range<'a, u64, u64>,
-    range: Range<'a, Float, u64>
+    range: Range<'a, R64, u64>
 }
 
 impl<'a> Bucket<'a> {
@@ -299,7 +293,8 @@ mod tests {
     fn num_buckets() {
         let mut histo = Histogram::with_buckets(10, None);
         for i in 0..100 {
-            histo.add_float(Float{number: i as f64});
+            // histo.add_float(Float{number: i as f64});
+            histo.add(i as f64);
         }
         assert_eq!(histo.buckets().count(), 10);
     }
@@ -308,7 +303,7 @@ mod tests {
     fn bucket_count() {
         let mut histo = Histogram::with_buckets(1, None);
         for i in 0..10 {
-            histo.add_float(Float{number: i as f64});
+            histo.add(i as f64);
         }
         assert_eq!(histo.buckets().count(), 1);
         assert_eq!(histo.buckets().next().unwrap().count(), 10);
@@ -317,7 +312,7 @@ mod tests {
     #[test]
     fn bucket_count_one() {
         let mut histo = Histogram::with_buckets(1, None);
-        histo.add_float(Float{number: 1.0});
+        histo.add(1.0);
         assert_eq!(histo.buckets().count(), 1);
         assert_eq!(histo.buckets().next().unwrap().count(), 1);
     }
@@ -327,20 +322,20 @@ mod tests {
         use std::string::ToString;
 
         let mut histo = Histogram::with_buckets(1, None);
-        histo.add_float(Float{number: 99f64});
+        histo.add(99f64);
         histo.to_string();
     }
 
     #[test]
-    fn add_float() {
+    fn add() {
         let mut histo = Histogram::with_buckets(5, Some(2));
         let numsamples = 100;
         let mut rng = rand::thread_rng();
 
-        for _ in 0..numsamples {
+        for i in 0..numsamples {
             // prepare random sample to add to histogram
-            let sample = Float{number: rng.gen()};
-            histo.add_float(sample);
+            let sample: f64 = rng.gen::<f64>() * i as f64;
+            histo.add(sample);
         }
 
         for (i, bucket) in histo.buckets().enumerate() {
@@ -353,7 +348,6 @@ mod tests {
 
         assert_eq!(numsamples, histo.stats.len(), "stats.len() should be correct");
         assert_eq!(numsamples, histo.minmax.len(), "minmax.len() should be correct");
-
     }
 }
 
@@ -369,15 +363,15 @@ mod quickchecks {
             }
 
             let len = samples.len();
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             assert_eq!(len, histo.stats.len(), "stats.len() should be correct");
             assert_eq!(len, histo.minmax.len(), "minmax.len() should be correct");
             assert_eq!(len as u64,
-                       histo.samples.values().cloned().sum::<u64>(),
+                       histo.float_samples.values().cloned().sum::<u64>(),
                        "samples.values() count should be correct");
             assert_eq!(len as u64,
                        histo.buckets().map(|b| b.count()).sum::<u64>(),
@@ -392,9 +386,9 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             assert!(histo.buckets().count() as u64 <= buckets,
@@ -406,9 +400,9 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
 
             histo.buckets()
@@ -417,7 +411,7 @@ mod quickchecks {
                     let (min, max) = minmax.unwrap_or((bucket_range, bucket_range));
                     let min = cmp::min(min, bucket_range);
                     let max = cmp::max(max, bucket_range);
-                    assert!(max - min <= 1);
+                    assert!(max - min <= 1f64);
                     Some((min, max))
                 });
         }
@@ -429,11 +423,10 @@ mod quickchecks {
                 return;
             }
 
-            let mut histo = Histogram::with_buckets(buckets);
+            let mut histo = Histogram::with_buckets(buckets, None);
             for s in samples {
-                histo.add(s);
+                histo.add(s as f64);
             }
-
             histo.to_string();
         }
     }

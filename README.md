@@ -14,15 +14,14 @@ It uses O(n) memory.
 ```rust
 extern crate histo_fp;
 use histo_fp::Histogram;
-use histo_fp::float::float_type::Float;
 
 // Create a histogram that will have 10 buckets.
 let mut histogram = Histogram::with_buckets(10, None);
 
 // Adds some samples to the histogram.
 for sample in 0..100 {
-    histogram.add_float(Float{number: sample as f64);
-    histogram.add_float(Float{number: (sample * sample) as f64);
+    histogram.add(sample as f64);
+    histogram.add((sample * sample) as f64);
 }
 
 // Iterate over buckets and do stuff with their range and count.

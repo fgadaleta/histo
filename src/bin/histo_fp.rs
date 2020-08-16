@@ -5,7 +5,6 @@ extern crate histo_fp;
 
 use std::io::{self, BufRead, Write};
 use std::process;
-use histo_fp::float::float_type::Float;
 
 
 fn main() {
@@ -33,7 +32,7 @@ fn try_main() -> io::Result<()> {
                 .parse()
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
-            hist.add_float(Float{number: sample});
+            hist.add(sample);
         }
 
         line.clear();

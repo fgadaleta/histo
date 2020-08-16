@@ -6,7 +6,8 @@ keywords = ["histogram", "stddev", "mean"]
 license = "Apache-2.0/MIT"
 name = "histo_fp"
 repository = "https://github.com/fgadaleta/histo_fp"
-version = "0.2.0"
+version = "0.2.1"
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "fgadaleta/histo_fp" }
@@ -18,6 +19,7 @@ doc = false
 [dependencies]
 streaming-stats = "0.1.28"
 rand = "0.7"
+noisy_float = "0.1.12"
 
 [dependencies.quickcheck]
 optional = true
