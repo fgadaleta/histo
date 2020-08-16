@@ -1,13 +1,12 @@
 # `histo_fp`
 
-[![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fitzgen/histo) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
+[![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fgadaleta/histo_fp) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo_fp) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
 
-Histograms with a configurable number of buckets, and a terminal-friendly
+Histograms with a configurable number of floating point buckets, and a terminal-friendly
 `Display`.
 
 This crate provides a `Histogram` type that allows configuration of the number
-of buckets that will be used, regardless of the range of input samples. This is
-useful when displaying a `Histogram` (for example, when printing it to a
+of buckets with size in floating point that will be used, regardless of the range of input samples. This is useful when displaying a `Histogram` (for example, when printing it to a
 terminal) but it sacrifices fancy tracking of precision and significant figures.
 
 It uses O(n) memory.
@@ -61,17 +60,17 @@ println!("{}", histogram);
 
 ## Install and Usage
 
-To use the `histo` crate in your Rust project, add it to your `Cargo.toml` file:
+To use the `histo_fp` crate in your Rust project, add it to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-histo = "0.1.0"
+histo_fp = "0.2.0"
 ```
 
-The `histo` crate also comes with the command line `histo` tool:
+The `histo_fp` crate also comes with the command line `histo_fp` tool:
 
 ```commands
-$ cargo install histo
+$ cargo install histo_fp
 $ tail samples.txt
 1
 2

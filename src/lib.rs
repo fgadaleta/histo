@@ -75,6 +75,7 @@ use std::collections::BTreeMap;
 use std::collections::btree_map::Range;
 use noisy_float::prelude::*;
 
+
 /// A histogram is a collection of samples, sorted into buckets.
 ///
 /// See the crate level documentation for more details.

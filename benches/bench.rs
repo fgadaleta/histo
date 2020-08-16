@@ -3,6 +3,7 @@
 extern crate histo_fp;
 extern crate test;
 
+
 #[bench]
 fn bench_adding_samples(b: &mut test::Bencher) {
     b.iter(|| {
