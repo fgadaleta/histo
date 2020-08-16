@@ -1,4 +1,4 @@
-# `histo`
+# `histo_fp`
 
 [![Build Status](https://travis-ci.org/fitzgen/histo.png?branch=master)](https://travis-ci.org/fitzgen/histo) [![histo on crates.io](https://img.shields.io/crates/v/histo.svg)](https://crates.io/crates/histo) [![histo on docs.rs](https://docs.rs/histo/badge.svg)](https://docs.rs/histo/)
 
